@@ -1,7 +1,7 @@
 // Шаблон карты карточки
 const cardTemplateHolder = document.querySelector('#card-template');
 console.assert(!!cardTemplateHolder, 'Не найден шаблон карт "card-template" в html файле');
-cardTemplate = cardTemplateHolder.content.querySelector('.card');
+const cardTemplate = cardTemplateHolder.content.querySelector('.card');
 
 // DOM узлы
 const placesList = document.querySelector('.page .places__list');
