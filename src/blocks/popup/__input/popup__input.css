@@ -10,6 +10,12 @@
   margin-bottom: 10px;
 }
 
+/* т.к. паддинга слева нет - рамка наезжала на буквы */
+.popup__input:focus-visible {
+  border: none;
+  outline-offset: 2px;
+}
+
 .popup__input:last-of-type {
   margin-bottom: 0;
 }
