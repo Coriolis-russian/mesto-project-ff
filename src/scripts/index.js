@@ -1,14 +1,17 @@
-import '../pages/index.css';
+import "../pages/index.css";
 
-import {initialCards} from './cards.js';
+import { initialCards } from "./cards.js";
 
 // Шаблон карты карточки
-const cardTemplateHolder = document.querySelector('#card-template');
-console.assert(!!cardTemplateHolder, 'Не найден шаблон карт "card-template" в html файле');
-const cardTemplate = cardTemplateHolder.content.querySelector('.card');
+const cardTemplateHolder = document.querySelector("#card-template");
+console.assert(
+  !!cardTemplateHolder,
+  'Не найден шаблон карт "card-template" в html файле'
+);
+const cardTemplate = cardTemplateHolder.content.querySelector(".card");
 
 // DOM узлы
-const placesList = document.querySelector('.page .places__list');
+const placesList = document.querySelector(".page .places__list");
 
 /**
  * Функция создания карточки
@@ -18,10 +21,12 @@ const placesList = document.querySelector('.page .places__list');
  */
 function createCard(name, imgLink, deleteCard) {
   const card = cardTemplate.cloneNode(true);
-  card.querySelector('.card__title').textContent = name;
-  card.querySelector('.card__image').src = imgLink;
+  card.querySelector(".card__title").textContent = name;
+  card.querySelector(".card__image").src = imgLink;
   // скрываем детали реализации в анонимной функции, нас интересует только колбэк удаления
-  card.querySelector('.card__delete-button').addEventListener('click', () => deleteCard(card));
+  card
+    .querySelector(".card__delete-button")
+    .addEventListener("click", () => deleteCard(card));
   return card;
 }
 
@@ -34,7 +39,7 @@ function deleteCard(card) {
 }
 
 // Вывести карточки на страницу
-initialCards.forEach(cardInfo => {
+initialCards.forEach((cardInfo) => {
   const card = createCard(cardInfo.name, cardInfo.link, deleteCard);
-  placesList.append(card)
+  placesList.append(card);
 });
