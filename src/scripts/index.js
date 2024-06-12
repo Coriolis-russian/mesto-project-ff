@@ -1,3 +1,7 @@
+import '../pages/index.css';
+
+import {initialCards} from './cards.js';
+
 // Шаблон карты карточки
 const cardTemplateHolder = document.querySelector('#card-template');
 console.assert(!!cardTemplateHolder, 'Не найден шаблон карт "card-template" в html файле');
