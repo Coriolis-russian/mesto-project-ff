@@ -10,19 +10,27 @@ const cardTemplate = cardTemplateHolder.content.querySelector('.card');
 // DOM узлы
 const placesList = document.querySelector('.page .places__list');
 
-// Функция создания карточки
-function createCard(name, imgLink, delCallback) {
+/**
+ * Функция создания карточки
+ * @param {string} name - Название места
+ * @param {string} imgLink - ссылка на изображение
+ * @param {function(card)} deleteCard - функция для удаления карты, в параметре принимает объект с картой
+ */
+function createCard(name, imgLink, deleteCard) {
   const card = cardTemplate.cloneNode(true);
   card.querySelector('.card__title').textContent = name;
   card.querySelector('.card__image').src = imgLink;
-  card.querySelector('.card__delete-button').addEventListener('click', delCallback);
+  // скрываем детали реализации в анонимной функции, нас интересует только колбэк удаления
+  card.querySelector('.card__delete-button').addEventListener('click', () => deleteCard(card));
   return card;
 }
 
-// Функция удаления карточки
-function deleteCard(event) {
-  const deletedCard = event.target.closest('.card');
-  deletedCard.remove();
+/**
+ * Функция удаления карточки
+ * @param {card} card - функция для удаления карты, в параметре принимает объект с картой
+ */
+function deleteCard(card) {
+  card.remove();
 }
 
 // Вывести карточки на страницу
