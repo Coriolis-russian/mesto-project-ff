@@ -3,20 +3,19 @@
  */
 
 /**
- * Функция создания карточки
+ * Создать карточку
  * @param {Element} template - DOM-элемент шаблона карты
- * @param {string} name - Название места
- * @param {string} imgLink - ссылка на изображение
+ * @param {{name:string,link:string}} cardInfo - Название места и ссылка на картинку
  * @param {function(Element): undefined} doDeleteCard - функция для удаления карты, в параметре принимает карту
  * @param {function(Element,boolean): undefined} doLikeCard - функция проставления или снятия лайка карте
  * @return Element
  * DOM-элементом карты
  */
-export function createCard(template, name, imgLink, doDeleteCard, doLikeCard) {
+export function createCard(template, cardInfo, doDeleteCard, doLikeCard) {
   const card = template.cloneNode(true);
   card.querySelector('.card__title').textContent = name;
-  card.querySelector('.card__image').src = imgLink;
-  card.querySelector('.card__image').alt = name;
+  card.querySelector('.card__image').src = cardInfo.link;
+  card.querySelector('.card__image').alt = cardInfo.name;
   // скрываем детали реализации в анонимной функции, нас интересует только функция удаления
   card
     .querySelector('.card__delete-button')
@@ -25,7 +24,7 @@ export function createCard(template, name, imgLink, doDeleteCard, doLikeCard) {
 }
 
 /**
- * Функция удаления карточки
+ * Удалить карточку
  * @param {Element} card - функция удаления карты, в параметре принимает DOM-элемент с картой
  */
 export function deleteCard(card) {

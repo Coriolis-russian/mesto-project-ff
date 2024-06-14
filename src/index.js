@@ -4,7 +4,7 @@ import { initialCards } from './cards';
 import { createCard, deleteCard } from './components/card';
 import { openModal, closeModal } from './components/modal';
 
-//////////////////////// DOM узлы \\\\\\\\\\\\\\\\\\\\\\\\
+// //////// DOM узлы \\\\\\\\
 // шаблон карточки
 const cardTemplateHolder = document.querySelector('#card-template');
 console.assert(
@@ -30,8 +30,10 @@ const docProfile = {
   descHolder: document.querySelector('.page .profile__description'),
   form: document.forms['edit-profile']
 }
-//\\\\\\\\\\\\\\\\\\\\\\ DOM узлы ////////////////////////
+// \\\\\\\\ DOM узлы ////////
 
+
+// //////// Профиль \\\\\\\\
 // открыть диалог редактирования профиля
 function openProfileEditDialog() {
   docProfile.form.name.value = docProfile.titleHolder.textContent;
@@ -45,45 +47,59 @@ function saveProfileEditDialogData() {
   docProfile.descHolder.textContent = docProfile.form.description.value;
 }
 
-// нажатие на кнопку 'сохранить' в диалоге профиля
+// --------- Регистрация событий ---------
+
+// нажатие на кнопку 'редактировать' профиля
 docProfile.editButton.addEventListener('click', openProfileEditDialog);
 
-// сохранение введённых данных в форме редактирования профиля
+// нажатие на кнопку 'сохранить' в диалоге профиля
 docProfile.form.addEventListener('submit', (evt) => {
   evt.preventDefault();
   saveProfileEditDialogData();
   closeModal(docProfile.editDialog);
 });
+// \\\\\\\\ Профиль ////////
 
+
+// //////// Карточка \\\\\\\\
+// открыть диалог добавления нового места
 function openPlaceAddDialog() {
+  // Очистить поля, т.к. после прошлой отмены они тут так и останутся
+  docCard.form.reset();
   openModal(docCard.addDialog);
 }
 
+// сохранить новое место из диалога добавления
 function savePlaceAddDialogData() {
-  const name = docCard.form.elements['place-name'].value;
-  const link = docCard.form.elements['link'].value;
-  docCard.form.elements['place-name'].value = '';
-  docCard.form.elements['link'].value = '';
-  const newCard = createCard(docCard.template, name, link, deleteCard, undefined);
+  const cardInfo = {
+    name: docCard.form.elements['place-name'].value,
+    link: docCard.form.elements['link'].value
+  };
+  const newCard = createCard(docCard.template, cardInfo, deleteCard, undefined);
   docCard.holder.prepend(newCard);
+  // в конце не очищаю форму, что бы при плавном исчезновении текст оставался в ней
 }
 
-// нажатие на кнопку "новое место"
+// --------- Регистрация событий ---------
+
+// нажатие на кнопку 'новое место'
 docCard.addButton.addEventListener('click', openPlaceAddDialog);
 
-// сохранение введённых данных в форме добавления нового места
+// нажатие на кнопку 'сохранить' в диалоге добавления нового места
 docCard.form.addEventListener('submit', (evt) => {
   evt.preventDefault();
   savePlaceAddDialogData();
   closeModal(docCard.addDialog);
 });
+// \\\\\\\\ Карточка ////////
 
-// Вывести карточки на страницу
+
+// Инициализирующий страницу код
+// вывести заготовленные в cards.js карточки на страницу
 initialCards.forEach((cardInfo) => {
   const card = createCard(
     docCard.template,
-    cardInfo.name,
-    cardInfo.link,
+    cardInfo,
     deleteCard,
     undefined
   );
