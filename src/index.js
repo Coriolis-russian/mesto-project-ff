@@ -2,7 +2,7 @@ import './pages/index.css';
 
 import { initialCards } from './cards';
 import { createCard, deleteCard } from './components/card';
-import { openModal, closeModal } from './components/modal';
+import { openModal, closeModal, initModal} from './components/modal';
 
 // //////// DOM узлы \\\\\\\\
 // шаблон карточки
@@ -105,3 +105,7 @@ initialCards.forEach((cardInfo) => {
   );
   docCard.holder.append(card);
 });
+
+// Настройка модуля диалогов. В принципе можно не делать т.к. в данном случае
+// все классы совпадают, но пусть будет для наглядности.
+initModal('popup', 'popup_is-opened', 'popup__close');

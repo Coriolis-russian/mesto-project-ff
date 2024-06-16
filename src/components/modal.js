@@ -1,19 +1,28 @@
 /**
- * Модуль для работы с модальными окнами
+ * Модуль для работы с модальными окнами.
+ * Для первичной разовой настройки вызвать initModal,
+ * для открытия диалога - openModal,
+ * для закрытия closeModal.
  */
+
+const settings = {
+  popupClass: 'popup',
+  popupOpenClass: 'popup_is-opened',
+  closBtnClass: 'popup__close',
+}
 
 /**
  * Открыть всплывающий диалог
  * @param {Element} dialog - DOM-элемент диалога
  */
 export function openModal(dialog) {
-  dialog.classList.add('popup_is-opened');
+  dialog.classList.add(settings.popupOpenClass);
   // принципиально mousedown а не click, иначе если выделять текст и
   // отпустить на backdrop - закроется хотя не ожидаем
-  dialog.addEventListener('mousedown', closeByBackdropClick);
+  dialog.addEventListener('mousedown', closeByBackdropOrBtnClick);
   document.addEventListener('keydown', closeByEscHandler);
-  // запрещаем скролл, т.к. его величество модальный диалог
-  document.querySelector('.page').style.overflow = 'hidden';
+  // предотвратить скролл контента под модальным окном: просто не пускать события скрола :)
+  dialog.addEventListener('wheel', blockWheel);
 }
 
 /**
@@ -21,11 +30,21 @@ export function openModal(dialog) {
  * @param {Element} dialog - DOM-элемент открытого диалога
  */
 export function closeModal(dialog) {
-  dialog.classList.remove('popup_is-opened');
-  dialog.removeEventListener('mousedown', closeByBackdropClick);
+  dialog.classList.remove(settings.popupOpenClass);
+  dialog.removeEventListener('mousedown', closeByBackdropOrBtnClick);
   document.removeEventListener('keydown', closeByEscHandler);
-  // снова разрешаем скролл
-  document.querySelector('.page').style.overflow = 'unset';
+  dialog.removeEventListener('wheel', blockWheel);
+}
+
+/** первичная разовая настройка модуля:
+ * @param {string} popupClass - css класс писывающий окно модального диалога (по умолчанию "popup")
+ * @param {string} popupOpenedClass - css класс делающий диалог видимым (по умолчанию "popup_is-opened")
+ * @param {string} closBtnClass - css класс кнопки 'закрыть' в модальном диалоге (по умолчанию "popup__close")
+ */
+export function initModal(popupClass, popupOpenedClass, closBtnClass) {
+  settings.popupClass = popupClass ?? settings.popupClass;
+  settings.closBtnClass = closBtnClass ?? settings.closBtnClass;
+  settings.popupOpenClass = popupOpenedClass ?? settings.popupOpenClass;
 }
 
 function closeByEscHandler(keyEvent) {
@@ -36,14 +55,18 @@ function closeByEscHandler(keyEvent) {
   }
 }
 
-function closeByBackdropClick(mouseEvent) {
-  // злостно пользуемся тем что у кнопки свой класс
+function closeByBackdropOrBtnClick(mouseEvent) {
+  // пользуемся тем что у кнопки свой класс
   if (
-    mouseEvent.target.classList.contains('popup') ||
-    mouseEvent.target.classList.contains('popup__close')
+    mouseEvent.target.classList.contains(settings.popupClass) ||
+    mouseEvent.target.classList.contains(settings.closBtnClass)
   ) {
     const openedDialog = document.querySelector('.popup_is-opened');
     if (!!openedDialog) closeModal(openedDialog);
     mouseEvent.stopPropagation();
   }
+}
+
+function blockWheel(evt) {
+  evt.preventDefault();
 }
