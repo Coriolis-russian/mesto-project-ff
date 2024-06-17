@@ -1,7 +1,7 @@
 import './pages/index.css';
 
 import { initialCards } from './cards';
-import { createCard, deleteCard, initCard } from './components/card';
+import { createCard, deleteCard, invertLike, initCard } from './components/card';
 import { openModal, closeModal, initModal } from './components/modal';
 
 // //////// DOM узлы \\\\\\\\
@@ -20,6 +20,8 @@ const docCard = {
   addButton: document.querySelector('.page .profile__add-button'),
   addDialog: document.querySelector('.page .popup_type_new-card'),
   imageViewDialog: document.querySelector('.page .popup_type_image'),
+  imageViewDialogImage: document.querySelector('.page .popup_type_image .popup__image'),
+  imageViewDialogCaption: document.querySelector('.page .popup_type_image .popup__caption')
 };
 
 // профиль
@@ -63,7 +65,8 @@ docProfile.form.addEventListener('submit', (evt) => {
 // //////// Карточка \\\\\\\\
 // открыть диалог добавления нового места
 function cardOpenAddPlaceDialog() {
-  // Очистить поля, т.к. после прошлой отмены они тут так и останутся (и так задумано, для красоты)
+  // Очистить поля ДО открытия, т.к. после прошлой отмены они тут так и
+  // останутся (и так задумано, для красоты, см cardSaveAddPlaceDialogData)
   docCard.form.reset();
   openModal(docCard.addDialog);
 }
@@ -78,7 +81,7 @@ function cardSaveAddPlaceDialogData() {
     docCard.template,
     cardInfo,
     deleteCard,
-    cardInvertLike,
+    invertLike,
     cardShowFullSizeImage
   );
   docCard.holder.prepend(newCard);
@@ -86,19 +89,11 @@ function cardSaveAddPlaceDialogData() {
 }
 
 // открыть диалог просмотра фотографии места
-function cardShowFullSizeImage(card) {
+function cardShowFullSizeImage(image, name, alt) {
+  docCard.imageViewDialogImage.src = image;
+  docCard.imageViewDialogImage.alt = alt;
+  docCard.imageViewDialogCaption.textContent = name;
   openModal(docCard.imageViewDialog);
-  const imgInCard = card.querySelector('.card__image');
-  const imgFullSized = docCard.imageViewDialog.querySelector('.popup__image');
-  imgFullSized.src = imgInCard.src;
-  imgFullSized.alt = imgInCard.alt;
-  docCard.imageViewDialog.querySelector('.popup__caption').textContent =
-      card.querySelector('.card__title').textContent;
-}
-
-function cardInvertLike(card) {
-  const likeBtn = card.querySelector('.card__like-button');
-  likeBtn.classList.toggle('card__like-button_is-active');
 }
 
 // --------- Регистрация событий для карточек ---------
@@ -114,16 +109,9 @@ docCard.form.addEventListener('submit', (evt) => {
 });
 // \\\\\\\\ Карточка ////////
 
-// Настройка модулей. В принципе можно не делать т.к. в данном случае
-// все классы совпадают, но пусть будет для наглядности.
-// (но модуль modal еще вешает обработчики на все диалоги в документе)
-initModal('popup', 'popup_is-opened', 'popup__close');
-initCard(
-  'card__title',
-  'card__image',
-  'card__delete-button',
-  'card__like-button'
-);
+// Настройка модулей
+initModal();
+initCard();
 
 // Инициализирующий страницу код
 // вывести заготовленные в cards.js карточки на страницу
@@ -132,7 +120,7 @@ initialCards.forEach((cardInfo) => {
     docCard.template,
     cardInfo,
     deleteCard,
-    cardInvertLike,
+    invertLike,
     cardShowFullSizeImage
   );
   docCard.holder.append(card);
