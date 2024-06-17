@@ -9,12 +9,12 @@ const settings = {
   popupClass: 'popup',
   popupOpenClass: 'popup_is-opened',
   closBtnClass: 'popup__close',
-}
+};
 
 let openedDialog = {
   node: undefined,
   // добавил эту возможность ради искусства
-  onCloseByUserHandler: undefined
+  onCloseByUserHandler: undefined,
 };
 
 /**
@@ -61,8 +61,9 @@ export function initModal(popupClass, popupOpenedClass, closBtnClass) {
 function closeByEscHandler(keyEvent) {
   if (keyEvent.key === 'Escape') {
     if (
-        openedDialog.onCloseByUserHandler &&
-        !openedDialog.onCloseByUserHandler(openedDialog.node)) {
+      openedDialog.onCloseByUserHandler &&
+      !openedDialog.onCloseByUserHandler(openedDialog.node)
+    ) {
       return;
     }
     closeModal(openedDialog.node);
@@ -78,8 +79,9 @@ function closeByBackdropOrBtnClickHandler(mouseEvent) {
   ) {
     mouseEvent.stopPropagation();
     if (
-        openedDialog.onCloseByUserHandler &&
-        !openedDialog.onCloseByUserHandler(openedDialog.node)) {
+      openedDialog.onCloseByUserHandler &&
+      !openedDialog.onCloseByUserHandler(openedDialog.node)
+    ) {
       return;
     }
     closeModal(openedDialog.node);
