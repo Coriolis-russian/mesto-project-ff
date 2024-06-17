@@ -25,12 +25,7 @@ let openedDialog = {
  */
 export function openModal(dialog, onCloseByUser = undefined) {
   dialog.classList.add(settings.popupOpenClass);
-  // принципиально mousedown а не click, иначе если выделять текст и
-  // отпустить на backdrop - закроется хотя не ожидаем
-  dialog.addEventListener('mousedown', closeByBackdropOrBtnClickHandler);
   document.addEventListener('keydown', closeByEscHandler);
-  // предотвратить скролл контента под модальным окном: просто не пускать события скрола :)
-  dialog.addEventListener('wheel', blockWheel);
   openedDialog.node = dialog;
   openedDialog.onCloseByUserHandler = onCloseByUser;
 }
@@ -41,21 +36,28 @@ export function openModal(dialog, onCloseByUser = undefined) {
  */
 export function closeModal(dialog) {
   dialog.classList.remove(settings.popupOpenClass);
-  dialog.removeEventListener('mousedown', closeByBackdropOrBtnClickHandler);
   document.removeEventListener('keydown', closeByEscHandler);
-  dialog.removeEventListener('wheel', blockWheel);
   openedDialog.node = undefined;
 }
 
 /** первичная разовая настройка модуля:
- * @param {string} popupClass - css класс писывающий окно модального диалога (по умолчанию "popup")
+ * @param {string} popupClass - css класс описывающий окно модального диалога (по умолчанию "popup")
  * @param {string} popupOpenedClass - css класс делающий диалог видимым (по умолчанию "popup_is-opened")
  * @param {string} closBtnClass - css класс кнопки 'закрыть' в модальном диалоге (по умолчанию "popup__close")
  */
 export function initModal(popupClass, popupOpenedClass, closBtnClass) {
   settings.popupClass = popupClass ?? settings.popupClass;
-  settings.closBtnClass = closBtnClass ?? settings.closBtnClass;
   settings.popupOpenClass = popupOpenedClass ?? settings.popupOpenClass;
+  settings.closBtnClass = closBtnClass ?? settings.closBtnClass;
+
+  const dialogs = document.querySelectorAll('.' + settings.popupClass);
+  dialogs.forEach(function (dialog) {
+    // принципиально mousedown а не click, иначе если выделять текст и
+    // отпустить на backdrop - закроется хотя не ожидаем
+    dialog.addEventListener('mousedown', closeByBackdropOrBtnClickHandler);
+    // предотвратить скролл контента под модальным окном: просто не пускать события скрола
+    dialog.addEventListener('wheel', blockWheel);
+  });
 }
 
 function closeByEscHandler(keyEvent) {
