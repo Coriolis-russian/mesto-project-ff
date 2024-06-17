@@ -11,18 +11,28 @@ const settings = {
   closBtnClass: 'popup__close',
 }
 
+let openedDialog = {
+  node: undefined,
+  // добавил эту возможность ради искусства
+  onCloseByUserHandler: undefined
+};
+
 /**
  * Открыть всплывающий диалог
  * @param {Element} dialog - DOM-элемент диалога
+ * @param {function(Element): boolean} onCloseByUser - необязательный обработчик для отлова момента закрытия
+ * пользователем, может вернуть false если нужно предотвратить закрытие
  */
-export function openModal(dialog) {
+export function openModal(dialog, onCloseByUser = undefined) {
   dialog.classList.add(settings.popupOpenClass);
   // принципиально mousedown а не click, иначе если выделять текст и
   // отпустить на backdrop - закроется хотя не ожидаем
-  dialog.addEventListener('mousedown', closeByBackdropOrBtnClick);
+  dialog.addEventListener('mousedown', closeByBackdropOrBtnClickHandler);
   document.addEventListener('keydown', closeByEscHandler);
   // предотвратить скролл контента под модальным окном: просто не пускать события скрола :)
   dialog.addEventListener('wheel', blockWheel);
+  openedDialog.node = dialog;
+  openedDialog.onCloseByUserHandler = onCloseByUser;
 }
 
 /**
@@ -31,9 +41,10 @@ export function openModal(dialog) {
  */
 export function closeModal(dialog) {
   dialog.classList.remove(settings.popupOpenClass);
-  dialog.removeEventListener('mousedown', closeByBackdropOrBtnClick);
+  dialog.removeEventListener('mousedown', closeByBackdropOrBtnClickHandler);
   document.removeEventListener('keydown', closeByEscHandler);
   dialog.removeEventListener('wheel', blockWheel);
+  openedDialog.node = undefined;
 }
 
 /** первичная разовая настройка модуля:
@@ -49,21 +60,29 @@ export function initModal(popupClass, popupOpenedClass, closBtnClass) {
 
 function closeByEscHandler(keyEvent) {
   if (keyEvent.key === 'Escape') {
-    const openedDialog = document.querySelector('.popup_is-opened');
-    if (!!openedDialog) closeModal(openedDialog);
+    if (
+        openedDialog.onCloseByUserHandler &&
+        !openedDialog.onCloseByUserHandler(openedDialog.node)) {
+      return;
+    }
+    closeModal(openedDialog.node);
     keyEvent.stopPropagation();
   }
 }
 
-function closeByBackdropOrBtnClick(mouseEvent) {
+function closeByBackdropOrBtnClickHandler(mouseEvent) {
   // пользуемся тем что у кнопки свой класс
   if (
     mouseEvent.target.classList.contains(settings.popupClass) ||
     mouseEvent.target.classList.contains(settings.closBtnClass)
   ) {
-    const openedDialog = document.querySelector('.popup_is-opened');
-    if (!!openedDialog) closeModal(openedDialog);
     mouseEvent.stopPropagation();
+    if (
+        openedDialog.onCloseByUserHandler &&
+        !openedDialog.onCloseByUserHandler(openedDialog.node)) {
+      return;
+    }
+    closeModal(openedDialog.node);
   }
 }
 
