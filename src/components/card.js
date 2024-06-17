@@ -14,19 +14,19 @@ const settings = {
  * @param {Element} template - DOM-элемент шаблона карты
  * @param {{name:string,link:string}} cardInfo - Название места и ссылка на картинку
  * @param {function(Element)} onDelete - функция для удаления карты, в параметре принимает карту
- * @param {function(Element)} onLikeChange - функция проставления или снятия лайка карте
+ * @param {function(Element)} onInvertLike - функция проставления или снятия лайка карте
  * @param {function(Element)} onImageClick - обработчик клика по картинке в карточке
  * @return Element
  * DOM-элемент созданной карты
  */
-export function createCard(template, cardInfo, onDelete, onLikeChange, onImageClick) {
+export function createCard(template, cardInfo, onDelete, onInvertLike, onImageClick) {
   const card = template.cloneNode(true);
   card.querySelector('.' + settings.titleClass).textContent = cardInfo.name;
   const img = card.querySelector('.' + settings.imageClass)
   img.src = cardInfo.link;
   img.alt = cardInfo.name;
 
-  const callbacks = { onDelete, onLikeChange, onImageClick };
+  const callbacks = { onDelete, onLikeChange: onInvertLike, onImageClick };
   // все клики в карте обрабатываем в одном обработчике
   card.addEventListener('click', (evt) => clickHandler(evt, card, callbacks));
   return card;
