@@ -75,6 +75,8 @@ function cardImageClick(card) {
   const imgFullSized = docCard.imageViewDialog.querySelector('.popup__image');
   imgFullSized.src = imgInCard.src;
   imgFullSized.alt = imgInCard.alt;
+  docCard.imageViewDialog.querySelector('.popup__caption').textContent =
+      card.querySelector('.card__title').textContent;
 }
 
 function cardLikeChanged(card) {

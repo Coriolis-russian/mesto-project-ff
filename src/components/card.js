@@ -21,7 +21,7 @@ const settings = {
  */
 export function createCard(template, cardInfo, onDelete, onLikeChange, onImageClick) {
   const card = template.cloneNode(true);
-  card.querySelector('.' + settings.titleClass).textContent = name;
+  card.querySelector('.' + settings.titleClass).textContent = cardInfo.name;
   const img = card.querySelector('.' + settings.imageClass)
   img.src = cardInfo.link;
   img.alt = cardInfo.name;
