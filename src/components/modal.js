@@ -6,7 +6,7 @@
  */
 
 /** Локальный синглтон для хранения настроек диалога. Их можно переопределить процедурой initModal.
-*/
+ */
 const classNames = {
   dialog: 'popup',
   opener: 'popup_is-opened',
