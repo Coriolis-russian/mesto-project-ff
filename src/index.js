@@ -1,7 +1,12 @@
 import './pages/index.css';
 
 import { initialCards } from './cards';
-import { createCard, deleteCard, invertLike, initCard } from './components/card';
+import {
+  createCard,
+  deleteCard,
+  invertLike,
+  initCard,
+} from './components/card';
 import { openModal, closeModal, initModal } from './components/modal';
 
 // //////// DOM узлы \\\\\\\\
@@ -20,8 +25,12 @@ const docCard = {
   addButton: document.querySelector('.page .profile__add-button'),
   addDialog: document.querySelector('.page .popup_type_new-card'),
   imageViewDialog: document.querySelector('.page .popup_type_image'),
-  imageViewDialogImage: document.querySelector('.page .popup_type_image .popup__image'),
-  imageViewDialogCaption: document.querySelector('.page .popup_type_image .popup__caption')
+  imageViewDialogImage: document.querySelector(
+    '.page .popup_type_image .popup__image'
+  ),
+  imageViewDialogCaption: document.querySelector(
+    '.page .popup_type_image .popup__caption'
+  ),
 };
 
 // профиль
@@ -37,42 +46,39 @@ const docProfile = {
 
 // //////// Профиль \\\\\\\\
 // открыть диалог редактирования профиля
-function profileOpenEditDialog() {
+function handleProfileEditButtonClick() {
   docProfile.form.name.value = docProfile.titleHolder.textContent;
   docProfile.form.description.value = docProfile.descHolder.textContent;
   openModal(docProfile.editDialog);
 }
 
-// сохранить результат редактирования профиля в диалоге
-function profileSaveEditDialogData() {
+// обработчик события нажатия на кнопку "сохранить" в диалоге редактирования профиля
+function handleSaveProfile(evt) {
+  evt.preventDefault();
   docProfile.titleHolder.textContent = docProfile.form.name.value;
   docProfile.descHolder.textContent = docProfile.form.description.value;
+  closeModal(docProfile.editDialog);
 }
 
 // --------- Регистрация событий для профиля ---------
-
 // нажатие на кнопку 'редактировать' профиля
-docProfile.editButton.addEventListener('click', profileOpenEditDialog);
-
+docProfile.editButton.addEventListener('click', handleProfileEditButtonClick);
 // нажатие на кнопку 'сохранить' в диалоге профиля
-docProfile.form.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  profileSaveEditDialogData();
-  closeModal(docProfile.editDialog);
-});
+docProfile.form.addEventListener('submit', handleSaveProfile);
 // \\\\\\\\ Профиль ////////
 
 // //////// Карточка \\\\\\\\
 // открыть диалог добавления нового места
-function cardOpenAddPlaceDialog() {
+function handleNewPlaceButtonClick() {
   // Очистить поля ДО открытия, т.к. после прошлой отмены они тут так и
-  // останутся (и так задумано, для красоты, см cardSaveAddPlaceDialogData)
+  // останутся (и так задумано, для красоты, см saveCardAddPlaceDialogData)
   docCard.form.reset();
   openModal(docCard.addDialog);
 }
 
 // сохранить новое место из диалога добавления
-function cardSaveAddPlaceDialogData() {
+function handleSaveNewPlace(evt) {
+  evt.preventDefault();
   const cardInfo = {
     name: docCard.form.elements['place-name'].value,
     link: docCard.form.elements['link'].value,
@@ -82,14 +88,15 @@ function cardSaveAddPlaceDialogData() {
     cardInfo,
     deleteCard,
     invertLike,
-    cardShowFullSizeImage
+    showCardFullSizeImage
   );
   docCard.holder.prepend(newCard);
   // в конце не очищаю форму, что бы при плавном исчезновении текст оставался в ней до конца
+  closeModal(docCard.addDialog);
 }
 
 // открыть диалог просмотра фотографии места
-function cardShowFullSizeImage(image, name, alt) {
+function showCardFullSizeImage(image, name, alt) {
   docCard.imageViewDialogImage.src = image;
   docCard.imageViewDialogImage.alt = alt;
   docCard.imageViewDialogCaption.textContent = name;
@@ -97,19 +104,14 @@ function cardShowFullSizeImage(image, name, alt) {
 }
 
 // --------- Регистрация событий для карточек ---------
-
 // нажатие на кнопку 'новое место'
-docCard.addButton.addEventListener('click', cardOpenAddPlaceDialog);
-
+docCard.addButton.addEventListener('click', handleNewPlaceButtonClick);
 // нажатие на кнопку 'сохранить' в диалоге добавления нового места
-docCard.form.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  cardSaveAddPlaceDialogData();
-  closeModal(docCard.addDialog);
-});
+docCard.form.addEventListener('submit', handleSaveNewPlace);
 // \\\\\\\\ Карточка ////////
 
-// Настройка модулей
+// Настройка модулей.
+// Все имена классов оставляем по умолчанию.
 initModal();
 initCard();
 
@@ -121,7 +123,7 @@ initialCards.forEach((cardInfo) => {
     cardInfo,
     deleteCard,
     invertLike,
-    cardShowFullSizeImage
+    showCardFullSizeImage
   );
   docCard.holder.append(card);
 });
