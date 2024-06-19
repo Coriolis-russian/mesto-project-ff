@@ -1,15 +1,24 @@
 import './pages/index.css';
 
 import { initialCards } from './cards';
-import {
-  createCard,
-  deleteCard,
-  invertLike,
-  initCard,
-} from './components/card';
+import { createCard, deleteCard, invertLike } from './components/card';
 import { openModal, closeModal, initModal } from './components/modal';
 
 // //////// DOM узлы \\\\\\\\
+const popupClassNames = {
+  dialog: 'popup',
+  opener: 'popup_is-opened',
+  closeButton: 'popup__close',
+};
+
+const cardClassNames = {
+  title: 'card__title',
+  image: 'card__image',
+  delBtn: 'card__delete-button',
+  likeBtn: 'card__like-button',
+  like: 'card__like-button_is-active',
+};
+
 // шаблон карточки
 const cardTemplateHolder = document.querySelector('#card-template');
 console.assert(
@@ -49,7 +58,7 @@ const docProfile = {
 function handleProfileEditButtonClick() {
   docProfile.form.name.value = docProfile.titleHolder.textContent;
   docProfile.form.description.value = docProfile.descHolder.textContent;
-  openModal(docProfile.editDialog);
+  openModal(popupClassNames, docProfile.editDialog);
 }
 
 // обработчик события нажатия на кнопку "сохранить" в диалоге редактирования профиля
@@ -73,7 +82,7 @@ function handleNewPlaceButtonClick() {
   // Очистить поля ДО открытия, т.к. после прошлой отмены они тут так и
   // останутся (и так задумано, для красоты, см saveCardAddPlaceDialogData)
   docCard.form.reset();
-  openModal(docCard.addDialog);
+  openModal(popupClassNames, docCard.addDialog);
 }
 
 // сохранить новое место из диалога добавления
@@ -85,6 +94,7 @@ function handleSaveNewPlace(evt) {
   };
   const newCard = createCard(
     docCard.template,
+    cardClassNames,
     cardInfo,
     deleteCard,
     invertLike,
@@ -100,7 +110,7 @@ function showCardFullSizeImage(image, name, alt) {
   docCard.imageViewDialogImage.src = image;
   docCard.imageViewDialogImage.alt = alt;
   docCard.imageViewDialogCaption.textContent = name;
-  openModal(docCard.imageViewDialog);
+  openModal(popupClassNames, docCard.imageViewDialog);
 }
 
 // --------- Регистрация событий для карточек ---------
@@ -112,14 +122,14 @@ docCard.form.addEventListener('submit', handleSaveNewPlace);
 
 // Настройка модулей.
 // Все имена классов оставляем по умолчанию.
-initModal();
-initCard();
+initModal(popupClassNames);
 
 // Инициализирующий страницу код
 // вывести заготовленные в cards.js карточки на страницу
 initialCards.forEach((cardInfo) => {
   const card = createCard(
     docCard.template,
+    cardClassNames,
     cardInfo,
     deleteCard,
     invertLike,
