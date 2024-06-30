@@ -2,4 +2,4 @@
 
 Репозиторий: <https://github.com/Coriolis-russian/mesto-project-ff.git>
 
-<a href="https://coriolis-russian.github.io/mesto-project-ff/" target="_blank">Ссылка на сайт</a>
+[Ссылка на сайт](https://coriolis-russian.github.io/mesto-project-ff/ "Хостинг на GitHub.io")
